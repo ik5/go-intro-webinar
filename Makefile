@@ -15,8 +15,8 @@ test-short: update-dep
 	go test -v -a -coverpkg=all -short ./...
 
 build: update-dep
-	go build cmd/main
-	go build cmd/users
+	cd cmd/main; go build cmd/main
+	cd cmd/users; go build cmd/users
 
 update-dep:
 	GO111MODULE=on go mod tidy -v
