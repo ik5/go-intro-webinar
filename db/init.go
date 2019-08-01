@@ -15,7 +15,9 @@ import (
 
 // Conn os the database connection
 type Conn struct {
-	db *sql.DB
+	db         *sql.DB
+	ctx        context.Context
+	cancelFunc context.CancelFunc
 }
 
 // PGSSLFields passing information for
@@ -66,6 +68,10 @@ func Open(address, db, username, password string, port int, sslFields *PGSSLFiel
 	if err != nil {
 		conn = nil
 	}
+
+	ctx, cancelFunc := context.WithCancel(context.Background())
+	conn.ctx = ctx
+	conn.cancelFunc = cancelFunc
 	return
 }
 
@@ -93,6 +99,7 @@ func (conn *Conn) Begin(ctx context.Context, opts *sql.TxOptions) (*sql.Tx, erro
 // It is rare to Close a DB, as the DB handle is meant to be long-lived and
 // shared between many goroutines.
 func (conn *Conn) Close() error {
+	conn.cancelFunc()
 	return conn.db.Close()
 }
 

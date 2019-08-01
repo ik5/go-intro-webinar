@@ -19,7 +19,8 @@ type REST struct {
 	routing  map[routeAndMethod]http.HandlerFunc
 	rwRouter *sync.RWMutex
 
-	mux *http.ServeMux
-	ctx context.Context
-	srv *http.Server
+	mux        *http.ServeMux
+	ctx        context.Context
+	cancelFunc context.CancelFunc
+	srv        *http.Server
 }

@@ -9,15 +9,16 @@ import (
 
 // InitREST initialize a new REST service
 func InitREST(address string, port uint16) *REST {
-	ctx := context.Background()
+	ctx, cancelFunc := context.WithCancel(context.Background())
 	return &REST{
-		address:  address,
-		port:     port,
-		routing:  make(map[routeAndMethod]http.HandlerFunc),
-		rwRouter: &sync.RWMutex{},
-		mux:      http.NewServeMux(),
-		ctx:      ctx,
-		srv:      &http.Server{},
+		address:    address,
+		port:       port,
+		routing:    make(map[routeAndMethod]http.HandlerFunc),
+		rwRouter:   &sync.RWMutex{},
+		mux:        http.NewServeMux(),
+		ctx:        ctx,
+		cancelFunc: cancelFunc,
+		srv:        &http.Server{},
 	}
 }
 
@@ -28,6 +29,7 @@ func (rest *REST) GetContext() context.Context {
 
 // Stop the HTTP server
 func (rest *REST) Stop() error {
+	rest.cancelFunc()
 	return rest.srv.Shutdown(rest.ctx)
 }
 
