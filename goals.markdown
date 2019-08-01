@@ -6,7 +6,7 @@
   * Understand packages.
   * Understand dependencies.
 
-3. Creating several executables for a project.
+3. Creating more than one executable for a project.
 
 4. Preview of interfaces, types and reflections.
 
